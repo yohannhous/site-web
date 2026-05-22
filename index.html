@@ -684,6 +684,100 @@ async function buildCerfa13973PDF(){
 // ============================================================
 // GENERATION
 // ============================================================
+
+// ─── SUPABASE INTEGRATION ───
+var SUPA_URL = "https://yjabnjkzidfftnyahgdm.supabase.co";
+var SUPA_KEY = "sb_publishable_0I3VLS92KKwqrQDXy3hnZg_njMnIPMv";
+
+async function sauvegarderSurSupabase() {
+  var s = state;
+  var a = s.assoc;
+  var b = s.bureau;
+  var f = s.fonct;
+
+  var payload = {
+    nom_association: a.nom || null,
+    sigle: a.sigle || null,
+    nom_mosquee: a.mosquee || null,
+    etage: a.etage || null,
+    batiment: a.batiment || null,
+    num_voie: a.numVoie || null,
+    ext_voie: a.extVoie || null,
+    type_voie: a.typeVoie || null,
+    nom_voie: a.nomVoie || null,
+    lieu_dit: a.lieuDit || null,
+    code_postal: a.codePostal || null,
+    commune: a.commune || null,
+    telephone: a.telephone || null,
+    email: a.email || null,
+    date_constitution: f.date || null,
+    mois_ag: f.moisAG || null,
+    nb_conseillers: parseInt(f.nbConseillers) || null,
+    duree_mandat: parseInt(f.dureeMandat) || null,
+    cotisation_actifs: parseFloat(f.cotisationActifs) || null,
+    cotisation_bienfaiteurs: parseFloat(f.cotisationBienfaiteurs) || null,
+    president: {
+      civ: b.president.civ, prenom: b.president.prenom, nom: b.president.nom,
+      profession: b.president.profession, nationalite: b.president.nationalite,
+      etage: b.president.etage, batiment: b.president.batiment,
+      numVoie: b.president.numVoie, extVoie: b.president.extVoie,
+      typeVoie: b.president.typeVoie, nomVoie: b.president.nomVoie,
+      lieuDit: b.president.lieuDit, codePostal: b.president.codePostal,
+      commune: b.president.commune
+    },
+    secretaire: {
+      civ: b.secretaire.civ, prenom: b.secretaire.prenom, nom: b.secretaire.nom,
+      profession: b.secretaire.profession, nationalite: b.secretaire.nationalite,
+      etage: b.secretaire.etage, batiment: b.secretaire.batiment,
+      numVoie: b.secretaire.numVoie, extVoie: b.secretaire.extVoie,
+      typeVoie: b.secretaire.typeVoie, nomVoie: b.secretaire.nomVoie,
+      lieuDit: b.secretaire.lieuDit, codePostal: b.secretaire.codePostal,
+      commune: b.secretaire.commune
+    },
+    tresorier: {
+      civ: b.tresorier.civ, prenom: b.tresorier.prenom, nom: b.tresorier.nom,
+      profession: b.tresorier.profession, nationalite: b.tresorier.nationalite,
+      etage: b.tresorier.etage, batiment: b.tresorier.batiment,
+      numVoie: b.tresorier.numVoie, extVoie: b.tresorier.extVoie,
+      typeVoie: b.tresorier.typeVoie, nomVoie: b.tresorier.nomVoie,
+      lieuDit: b.tresorier.lieuDit, codePostal: b.tresorier.codePostal,
+      commune: b.tresorier.commune
+    },
+    imam_civ: b.imam.civ || null,
+    imam_prenom: b.imam.prenom || null,
+    imam_nom: b.imam.nom || null,
+    vice_presidents: b.vicePresidents.length ? b.vicePresidents : null,
+    secretaires_adjoints: b.secretairesAdjoints.length ? b.secretairesAdjoints : null,
+    tresoriers_adjoints: b.tresoriersAdjoints.length ? b.tresoriersAdjoints : null,
+    membres: s.membres,
+    statut: 'genere'
+  };
+
+  try {
+    var resp = await fetch(SUPA_URL + '/rest/v1/dossiers_associations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (resp.ok) {
+      console.log('Dossier enregistre sur Supabase');
+      return true;
+    } else {
+      var err = await resp.text();
+      console.error('Supabase error:', resp.status, err);
+      return false;
+    }
+  } catch(e) {
+    console.error('Supabase fetch error:', e.message);
+    return false;
+  }
+}
+
 async function genererTousDocuments(){
   syncDOM();
   var err=validate();
@@ -699,6 +793,10 @@ async function genererTousDocuments(){
     await sleep(700);
     dlBlob(await buildCerfa13973PDF(),"4_CERFA_13973_"+sn+".pdf");
     state.genDone=true;state.step=5;
+    // Sauvegarde Supabase en background
+    sauvegarderSurSupabase().then(function(ok){
+      if(ok) console.log("Dossier sauvegarde");
+    });
   }catch(e){
     console.error("Erreur:",e);
     state.error="Erreur : "+(e&&e.message?e.message:String(e));
@@ -738,6 +836,7 @@ function renderStep0(){
     '<div class="fr"><div class="f" style="margin-bottom:8px"><label>\u00c9tage / Apt</label><input id="fet" type="text" value="'+esc(a.etage||'')+'" placeholder="optionnel"></div><div class="f" style="margin-bottom:8px"><label>Immeuble / B\u00e2timent</label><input id="fbt" type="text" value="'+esc(a.batiment||'')+'" placeholder="optionnel"></div></div>'+
     '<div class="fr3">'+
     '<div class="f" style="margin-bottom:8px"><label>N\u00b0</label><input id="fnv" type="text" value="'+esc(a.numVoie)+'" placeholder="12"></div>'+
+    '<div class="f" style="margin-bottom:8px"><label>Extension</label><select id="fev"><option value=""> </option><option value="Bis">Bis</option><option value="Ter">Ter</option><option value="Quater">Quater</option><option value="A">A</option><option value="B">B</option></select></div>'+
     '<div class="f" style="margin-bottom:8px"><label>Type de voie <span class="req">*</span></label><select id="ftv"><option value="Allée">Allée</option><option value="Avenue">Avenue</option><option value="Boulevard">Boulevard</option><option value="Chemin">Chemin</option><option value="Impasse">Impasse</option><option value="Lieu-dit">Lieu-dit</option><option value="Passage">Passage</option><option value="Place">Place</option><option value="Route">Route</option><option value="Rue">Rue</option><option value="Résidence">Résidence</option><option value="Square">Square</option><option value="Village">Village</option><option value="ZA">ZA</option><option value="ZI">ZI</option></select></div>'+
     '<div class="f" style="margin-bottom:8px"><label>Nom de voie <span class="req">*</span></label><input id="fnnv" type="text" value="'+esc(a.nomVoie)+'" placeholder="principale"></div></div>'+
     '<div class="fr"><div class="f" style="margin-bottom:0"><label>Lieu-dit / Quartier <span class="hint">(optionnel)</span></label><input id="fld" type="text" value="'+esc(a.lieuDit)+'" placeholder="Village d\u2019Acoua"></div>'+
