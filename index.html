@@ -196,7 +196,7 @@ function personAddrCERFA(d,form,pfx,addrIdx,slot,fallback){
   var fd=function(n,v){try{form.getDropdown(n).select(v);}catch(e){}};
   fh(pfx+".Etage["+addrIdx+"]",d.etage||"");
   fh(pfx+".Batiment["+addrIdx+"]",d.batiment||"");
-  fh(pfx+".Num_Voie["+addrIdx+"]",d.numVoie||fallback.numVoie||"");
+  fh(pfx+".Num_Voie["+addrIdx+"]",(d.numVoie||fallback.numVoie||"").substring(0,5));
   if(d.extVoie&&d.extVoie.trim()) fd(pfx+".Ext_Voie["+addrIdx+"]",d.extVoie);
   fd(pfx+".Type_Voie["+addrIdx+"]",d.typeVoie||fallback.typeVoie||"Rue");
   fh(pfx+".Nom_Voie["+addrIdx+"]",d.nomVoie||fallback.nomVoie||"");
@@ -355,7 +355,7 @@ async function buildStatuts(){
     u.jpar("Elle s\u2019interdit toute activit\u00e9 \u00e0 caract\u00e8re politique. Elle s\u2019engage \u00e0 respecter les lois de la R\u00e9publique fran\u00e7aise, l\u2019ordre public et les libert\u00e9s fondamentales."),
     u.ipar("Note : L\u2019objet inclut express\u00e9ment la s\u00e9curisation afin de permettre l\u2019\u00e9ligibilit\u00e9 au FIPD."),
     u.artT("3","SI\u00c8GE SOCIAL"),
-    u.jpar("Le si\u00e8ge social est fix\u00e9 \u00e0 : "+a.adresse+", "+a.commune+", Mayotte (976). Il pourra \u00eatre transf\u00e9r\u00e9 par simple d\u00e9cision du conseil d\u2019administration, ratifi\u00e9e par l\u2019assembl\u00e9e g\u00e9n\u00e9rale."),
+    u.jpar("Le si\u00e8ge social est fix\u00e9 \u00e0 : "+fullAdresse(a)+", "+a.codePostal+" "+a.commune+", Mayotte (976). Il pourra \u00eatre transf\u00e9r\u00e9 par simple d\u00e9cision du conseil d\u2019administration, ratifi\u00e9e par l\u2019assembl\u00e9e g\u00e9n\u00e9rale."),
     u.artT("4","DUR\u00c9E"), u.jpar("La dur\u00e9e de l\u2019association est illimit\u00e9e."),
     u.h1("TITRE II \u2014 MEMBRES"),
     u.artT("5","COMPOSITION"), u.jpar("L\u2019association se compose de :"), u.bul("Membres d\u2019honneur"), u.bul("Membres bienfaiteurs"), u.bul("Membres actifs ou adh\u00e9rents"),
@@ -403,7 +403,7 @@ async function buildStatuts(){
     u.jpar("Le tr\u00e9sorier tient une comptabilit\u00e9 r\u00e9guli\u00e8re. Les comptes annuels comprennent obligatoirement un \u00e9tat s\u00e9par\u00e9 retra\u00e7ant les financements re\u00e7us de l\u2019\u00e9tranger, conform\u00e9ment \u00e0 la loi n\u00b02021-1109 du 24 ao\u00fbt 2021. Tout financement en provenance de l\u2019\u00e9tranger sup\u00e9rieur \u00e0 10 000 \u20ac doit \u00eatre d\u00e9clar\u00e9 au repr\u00e9sentant de l\u2019\u00c9tat dans le d\u00e9partement."),
     u.h1("TITRE V \u2014 LIEUX DE CULTE ET S\u00c9CURIT\u00c9"),
     u.artT("17","LIEUX DE CULTE"),
-    u.jpar("L\u2019association exerce habituellement le culte au sein des locaux suivants : "+a.mosquee+", "+a.adresse+", "+a.commune+", Mayotte (976). La liste des lieux de culte est communiqu\u00e9e au pr\u00e9fet du d\u00e9partement et tenue \u00e0 jour."),
+    u.jpar("L\u2019association exerce habituellement le culte au sein des locaux suivants : "+a.mosquee+", "+fullAdresse(a)+", "+a.codePostal+" "+a.commune+", Mayotte (976). La liste des lieux de culte est communiqu\u00e9e au pr\u00e9fet du d\u00e9partement et tenue \u00e0 jour."),
     u.artT("18","S\u00c9CURIT\u00c9 DES LIEUX ET DES PERSONNES"),
     u.jpar("L\u2019association veille \u00e0 la s\u00e9curit\u00e9 des fid\u00e8les et des biens affect\u00e9s au culte. Elle peut faire appel \u00e0 tout financement public disponible, notamment le FIPD, pour financer des dispositifs de vid\u00e9oprotection, de contr\u00f4le d\u2019acc\u00e8s et de s\u00e9curisation des locaux."),
     u.h1("TITRE VI \u2014 DISPOSITIONS FINALES"),
@@ -459,13 +459,13 @@ async function buildPV(){
   var s=state,a=s.assoc,b=s.bureau,f=s.fonct;
   var dateStr=longDate(f.date);
 
-  var fullBureau=[{fn:"Pr\u00e9sident(e)",civ:b.president.civ,nom:b.president.nom,prenom:b.president.prenom,prof:b.president.profession,nat:b.president.nationalite,adr:b.president.adresse||a.adresse}];
-  b.vicePresidents.forEach(function(vp){fullBureau.push({fn:"Vice-Pr\u00e9sident(e)",civ:"M.",nom:vp.nom,prenom:vp.prenom,prof:"",nat:"Fran\u00e7aise",adr:a.adresse});});
-  fullBureau.push({fn:"Secr\u00e9taire",civ:b.secretaire.civ,nom:b.secretaire.nom,prenom:b.secretaire.prenom,prof:b.secretaire.profession,nat:b.secretaire.nationalite,adr:b.secretaire.adresse||a.adresse});
-  b.secretairesAdjoints.forEach(function(sa){fullBureau.push({fn:"Secr\u00e9taire Adjoint(e)",civ:"M.",nom:sa.nom,prenom:sa.prenom,prof:"",nat:"Fran\u00e7aise",adr:a.adresse});});
-  fullBureau.push({fn:"Tr\u00e9sorier(e)",civ:b.tresorier.civ,nom:b.tresorier.nom,prenom:b.tresorier.prenom,prof:b.tresorier.profession,nat:b.tresorier.nationalite,adr:b.tresorier.adresse||a.adresse});
-  b.tresoriersAdjoints.forEach(function(ta){fullBureau.push({fn:"Tr\u00e9sorier(e) Adjoint(e)",civ:"M.",nom:ta.nom,prenom:ta.prenom,prof:"",nat:"Fran\u00e7aise",adr:a.adresse});});
-  if(b.imam&&(b.imam.prenom||b.imam.nom)) fullBureau.push({fn:"Imam / Responsable religieux(se)",civ:b.imam.civ||"M.",nom:b.imam.nom,prenom:b.imam.prenom,prof:"",nat:"Fran\u00e7aise",adr:a.adresse});
+  var fullBureau=[{fn:"Pr\u00e9sident(e)",civ:b.president.civ,nom:b.president.nom,prenom:b.president.prenom,prof:b.president.profession,nat:b.president.nationalite,adr:b.president.adresse||fullAdresse(a)}];
+  b.vicePresidents.forEach(function(vp){fullBureau.push({fn:"Vice-Pr\u00e9sident(e)",civ:"M.",nom:vp.nom,prenom:vp.prenom,prof:"",nat:"Fran\u00e7aise",adr:fullAdresse(a)});});
+  fullBureau.push({fn:"Secr\u00e9taire",civ:b.secretaire.civ,nom:b.secretaire.nom,prenom:b.secretaire.prenom,prof:b.secretaire.profession,nat:b.secretaire.nationalite,adr:fullAdresse(b.secretaire)||fullAdresse(a)});
+  b.secretairesAdjoints.forEach(function(sa){fullBureau.push({fn:"Secr\u00e9taire Adjoint(e)",civ:"M.",nom:sa.nom,prenom:sa.prenom,prof:"",nat:"Fran\u00e7aise",adr:fullAdresse(a)});});
+  fullBureau.push({fn:"Tr\u00e9sorier(e)",civ:b.tresorier.civ,nom:b.tresorier.nom,prenom:b.tresorier.prenom,prof:b.tresorier.profession,nat:b.tresorier.nationalite,adr:fullAdresse(b.tresorier)||fullAdresse(a)});
+  b.tresoriersAdjoints.forEach(function(ta){fullBureau.push({fn:"Tr\u00e9sorier(e) Adjoint(e)",civ:"M.",nom:ta.nom,prenom:ta.prenom,prof:"",nat:"Fran\u00e7aise",adr:fullAdresse(a)});});
+  if(b.imam&&(b.imam.prenom||b.imam.nom)) fullBureau.push({fn:"Imam / Responsable religieux(se)",civ:b.imam.civ||"M.",nom:b.imam.nom,prenom:b.imam.prenom,prof:"",nat:"Fran\u00e7aise",adr:fullAdresse(a)});
 
   function sep(t){return new D.Paragraph({children:[u.txt(t,true,24)],spacing:{before:280,after:100},border:{bottom:{style:D.BorderStyle.SINGLE,size:4,color:"D8F3DC",space:2}}});}
 
@@ -474,7 +474,7 @@ async function buildPV(){
     u.par([u.txt(fullAdresseVille(a),false,20,"595959")],{alignment:D.AlignmentType.CENTER,spacing:{before:0,after:200}}),
     new D.Paragraph({children:[u.txt("Proc\u00e8s-verbal de l\u2019assembl\u00e9e g\u00e9n\u00e9rale constitutive du "+dateStr,true,24)],alignment:D.AlignmentType.CENTER,spacing:{before:0,after:400},border:{bottom:{style:D.BorderStyle.SINGLE,size:6,color:"1A4731",space:4}}}),
     u.empty(),
-    u.jpar("Le "+dateStr+" \u00e0 14h00, les fondateurs de l\u2019association "+a.nom+" se sont r\u00e9unis en assembl\u00e9e g\u00e9n\u00e9rale constitutive \u00e0 "+(a.mosquee||a.nom)+", "+a.adresse+", "+a.commune+", Mayotte."),
+    u.jpar("Le "+dateStr+" \u00e0 14h00, les fondateurs de l\u2019association "+a.nom+" se sont r\u00e9unis en assembl\u00e9e g\u00e9n\u00e9rale constitutive \u00e0 "+(a.mosquee||a.nom)+(fullAdresse(a)?", "+fullAdresse(a):"")+", "+a.codePostal+" "+a.commune+", Mayotte."),
     u.empty(),
     sep("Sont pr\u00e9sents :"),
   ];
@@ -494,7 +494,7 @@ async function buildPV(){
   // DELIBERATION 2
   children.push(new D.Paragraph({children:[u.txt("2\u00e8me d\u00e9lib\u00e9ration : ",true,24),u.txt("D\u00e9signation des membres du bureau",true,24)],spacing:{before:240,after:80}}));
   children.push(u.jpar("L\u2019assembl\u00e9e g\u00e9n\u00e9rale constitutive d\u00e9signe en qualit\u00e9 de premiers membres du bureau :"));
-  fullBureau.forEach(function(m){children.push(u.par([u.txt("\u2013 "+m.fn+" : "+m.prenom+" "+m.nom+", "+m.prof+", nationalit\u00e9 "+m.nat+", domicili\u00e9(e) \u00e0 "+(m.adr||a.adresse)+", "+a.commune+", Mayotte.",false,22)],{spacing:{before:30,after:30}}));});
+  fullBureau.forEach(function(m){children.push(u.par([u.txt("\u2013 "+m.fn+" : "+m.prenom+" "+m.nom+", "+m.prof+", nationalit\u00e9 "+m.nat+", domicili\u00e9(e) \u00e0 "+(m.adr||fullAdresse(a))+", "+a.commune+", Mayotte.",false,22)],{spacing:{before:30,after:30}}));});
   children.push(u.empty());
   children.push(u.jpar("Conform\u00e9ment aux statuts, cette d\u00e9signation est faite pour une dur\u00e9e expirant lors de l\u2019assembl\u00e9e g\u00e9n\u00e9rale qui sera appel\u00e9e \u00e0 statuer sur les comptes du premier exercice. Les membres du bureau ainsi d\u00e9sign\u00e9s acceptent leurs fonctions."));
   children.push(u.par([u.txt("Cette d\u00e9lib\u00e9ration est adopt\u00e9e \u00e0 l\u2019unanimit\u00e9.",true,22,"2d6a4f")],{spacing:{before:60,after:120}}));
@@ -529,7 +529,15 @@ async function buildCerfa13971PDF(){
   var ds=fmtDate(f.date);
 
   // Helper functions
-  function st(n,v){try{form.getTextField(n).setText(String(v||""));}catch(e){}}
+  var _font=null;
+  try{_font=await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);}catch(e){}
+  function st(n,v){
+    try{
+      var f=form.getTextField(n);
+      f.setText(String(v||""));
+      if(_font) f.updateAppearances(_font);
+    }catch(e){}
+  }
   function sr(n,v){try{form.getRadioGroup(n).select(v);}catch(e){}}
   function sd(n,v){if(!v||!v.trim())return;try{form.getDropdown(n).select(v);}catch(e){}}
   function civ(c){if(c==="Mme")return"Madame";if(c==="Mlle")return"Mademoiselle";return"Monsieur";}
@@ -573,7 +581,7 @@ async function buildCerfa13971PDF(){
   var pages=["Page2","Page3","Page4","Page5","Page6"];
   pages.forEach(function(pg,pi){
     var pfx="topmostSubform[0]."+pg+"[0]";
-    try{var tlf=form.getTextField(pfx+".Titre_Long[0]");tlf.enableMultiline();tlf.setText(a.nom||"");}catch(e){}
+    try{var tlf=form.getTextField(pfx+".Titre_Long[0]");tlf.enableMultiline();tlf.setFontSize(10);tlf.setText(a.nom||"");if(_font)tlf.updateAppearances(_font);}catch(e){}
     [0,1,2].forEach(function(slot){
       var idx=pi*3+slot;
       if(idx>=dirs.length) return;
@@ -602,6 +610,7 @@ async function buildCerfa13971PDF(){
     });
   });
 
+  try{form.updateFieldAppearances();}catch(e){}
   return new Blob([await pdfDoc.save()],{type:"application/pdf"});
 }
 
@@ -614,7 +623,15 @@ async function buildCerfa13973PDF(){
   var s=state,a=s.assoc,b=s.bureau,f=s.fonct;
   var ds=fmtDate(f.date);
 
-  function st(n,v){try{form.getTextField(n).setText(String(v||""));}catch(e){}}
+  var _font=null;
+  try{_font=await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);}catch(e){}
+  function st(n,v){
+    try{
+      var f=form.getTextField(n);
+      f.setText(String(v||""));
+      if(_font) f.updateAppearances(_font);
+    }catch(e){}
+  }
   function sr(n,v){try{form.getRadioGroup(n).select(v);}catch(e){}}
   function sd(n,v){if(!v||!v.trim())return;try{form.getDropdown(n).select(v);}catch(e){}}
 
@@ -659,6 +676,7 @@ async function buildCerfa13973PDF(){
   st("form[0].Page2[0].Lieu_declaration[0]", a.commune);
   st("form[0].Page2[0].Nom_declarant[0]",    b.president.prenom+" "+b.president.nom+" - Pr\u00e9sident(e)");
 
+  try{form.updateFieldAppearances();}catch(e){}
   return new Blob([await pdfDoc.save()],{type:"application/pdf"});
 }
 
@@ -869,6 +887,43 @@ function render(){
 
 render();
 
+
+function updateStateFromInput(id,val){
+  if(id==='fn'){state.assoc.nom=val;return;}if(id==='fsi'){state.assoc.sigle=val;return;}
+  if(id==='fmo'){state.assoc.mosquee=val;return;}if(id==='fc'){state.assoc.commune=val;return;}
+  if(id==='fet'){state.assoc.etage=val;return;}if(id==='fbt'){state.assoc.batiment=val;return;}
+  if(id==='fnv'){state.assoc.numVoie=val;return;}if(id==='fev'){state.assoc.extVoie=val;return;}
+  if(id==='ftv'){state.assoc.typeVoie=val;return;}if(id==='fnnv'){state.assoc.nomVoie=val;return;}
+  if(id==='fld'){state.assoc.lieuDit=val;return;}if(id==='fcp'){state.assoc.codePostal=val;return;}
+  if(id==='ftel'){state.assoc.telephone=val;return;}if(id==='femail'){state.assoc.email=val;return;}
+  if(id==='fca'){state.fonct.cotisationActifs=val;return;}if(id==='fcb'){state.fonct.cotisationBienfaiteurs=val;return;}
+  if(id==='fnb'){state.fonct.nbConseillers=val;return;}if(id==='fdu'){state.fonct.dureeMandat=val;return;}
+  if(id==='fmois'){state.fonct.moisAG=val;return;}if(id==='fdat'){state.fonct.date=val;return;}
+  var bFields=['president','secretaire','tresorier'];
+  for(var bi=0;bi<bFields.length;bi++){
+    var k=bFields[bi],p='b'+k;
+    if(id===p+'p'){state.bureau[k].prenom=val;return;}if(id===p+'n'){state.bureau[k].nom=val;return;}
+    if(id===p+'c'){state.bureau[k].civ=val;return;}if(id===p+'pr'){state.bureau[k].profession=val;return;}
+    if(id===p+'na'){state.bureau[k].nationalite=val;return;}if(id===p+'et'){state.bureau[k].etage=val;return;}
+    if(id===p+'bt'){state.bureau[k].batiment=val;return;}if(id===p+'nv'){state.bureau[k].numVoie=val;return;}
+    if(id===p+'ev'){state.bureau[k].extVoie=val;return;}if(id===p+'tv'){state.bureau[k].typeVoie=val;return;}
+    if(id===p+'nnv'){state.bureau[k].nomVoie=val;return;}if(id===p+'ld'){state.bureau[k].lieuDit=val;return;}
+    if(id===p+'cp'){state.bureau[k].codePostal=val;return;}if(id===p+'co'){state.bureau[k].commune=val;return;}
+  }
+  var mp=id.match(/^mp(\d+)$/);if(mp&&state.membres[+mp[1]]){state.membres[+mp[1]].prenom=val;return;}
+  var mn=id.match(/^mn(\d+)$/);if(mn&&state.membres[+mn[1]]){state.membres[+mn[1]].nom=val;return;}
+  var ma=id.match(/^ma(\d+)$/);if(ma&&state.membres[+ma[1]]){state.membres[+ma[1]].adresse=val;return;}
+  var adj=id.match(/^(vp|sa|ta)(p|n)(\d+)$/);
+  if(adj){
+    var adjMap={vp:'vicePresidents',sa:'secretairesAdjoints',ta:'tresoriersAdjoints'};
+    var adjT=adjMap[adj[1]],adjF=adj[2]==='p'?'prenom':'nom',adjI=+adj[3];
+    if(state.bureau[adjT]&&state.bureau[adjT][adjI]) state.bureau[adjT][adjI][adjF]=val;
+  }
+}
+(function(){
+  var main=document.getElementById('main');
+  main.addEventListener('input',function(e){if(e.target&&e.target.id)updateStateFromInput(e.target.id,e.target.value);});
+  main.addEventListener('change',function(e){if(e.target&&e.target.id)updateStateFromInput(e.target.id,e.target.value);});
+}());
+
 </script>
-</body>
-</htmlsd(pfx+".Nationalit\\u00e9s["+slot+"]",d.na||"Fran\\u00e7aise");\n        var addrIdx=[2,0,1][slot];\n        personAddrCERFA(d.d||{},form,pfx,addrIdx,slot,a);>
