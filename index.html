@@ -316,7 +316,7 @@ function DU(){
       txt("Mayotte (976)",false,18,"888888")
     ],{tabStops:[{type:D.TabStopType.RIGHT,position:D.TabStopPosition.MAX}],border:{top:{style:D.BorderStyle.SINGLE,size:4,color:"D8F3DC",space:4}}})]});
   }
-  return {D:D,G:G,PW:PW,MG:MG,CW:CW,cw3:cw3,cw2:cw2,bn:bn,bno:bno,txt:txt,par:par,empty:empty,jpar:jpar,ipar:ipar,artT:artT,h1:h1,bul:bul,num:num,numbering:numbering,styles:styles,pageProps:pageProps,mkHdr:mkHdr,mkFtr:mkFtr};
+  return {D:D,G:G,PW:PW,MG:MG,CW:CW,cw3:cw3,cw2:cw2,bn:bn,bno:bno,txt:txt,par:par,empty:empty,jpar:jpar,ipar:ipar,artT:artT,h1:h1,bul:bul,num:num,num2:num2,numbering:numbering,styles:styles,pageProps:pageProps,mkHdr:mkHdr,mkFtr:mkFtr};
 }
 
 // ============================================================
@@ -711,7 +711,8 @@ function DU(){
   function num2(t){return new D.Paragraph({children:[txt(t)],numbering:{reference:"num2",level:0},spacing:{before:40,after:40}});}
   var numbering={config:[
     {reference:"bul",levels:[{level:0,format:D.LevelFormat.BULLET,text:"\u2013",alignment:D.AlignmentType.LEFT,style:{paragraph:{indent:{left:720,hanging:360}},run:{font:"Arial",size:24}}}]},
-    {reference:"num",levels:[{level:0,format:D.LevelFormat.DECIMAL,text:"%1\u00b0",alignment:D.AlignmentType.LEFT,style:{paragraph:{indent:{left:720,hanging:360}},run:{font:"Arial",size:24}}}]}
+    {reference:"num",levels:[{level:0,format:D.LevelFormat.DECIMAL,text:"%1\u00b0",alignment:D.AlignmentType.LEFT,style:{paragraph:{indent:{left:720,hanging:360}},run:{font:"Arial",size:24}}}]},
+    {reference:"num2",levels:[{level:0,format:D.LevelFormat.DECIMAL,text:"%1°",alignment:D.AlignmentType.LEFT,style:{paragraph:{indent:{left:720,hanging:360}},run:{font:"Arial",size:24}}}]}
   ]};
   var styles={default:{document:{run:{font:"Arial",size:24,color:"000000"}}}};
   var pageProps={size:{width:PW,height:16838},margin:{top:MG,right:MG,bottom:MG,left:MG}};
@@ -731,7 +732,7 @@ function DU(){
       txt("Mayotte (976)",false,18,"888888")
     ],{tabStops:[{type:D.TabStopType.RIGHT,position:D.TabStopPosition.MAX}],border:{top:{style:D.BorderStyle.SINGLE,size:4,color:"D8F3DC",space:4}}})]});
   }
-  return {D:D,G:G,PW:PW,MG:MG,CW:CW,cw3:cw3,cw2:cw2,bn:bn,bno:bno,txt:txt,par:par,empty:empty,jpar:jpar,ipar:ipar,artT:artT,h1:h1,bul:bul,num:num,numbering:numbering,styles:styles,pageProps:pageProps,mkHdr:mkHdr,mkFtr:mkFtr};
+  return {D:D,G:G,PW:PW,MG:MG,CW:CW,cw3:cw3,cw2:cw2,bn:bn,bno:bno,txt:txt,par:par,empty:empty,jpar:jpar,ipar:ipar,artT:artT,h1:h1,bul:bul,num:num,num2:num2,numbering:numbering,styles:styles,pageProps:pageProps,mkHdr:mkHdr,mkFtr:mkFtr};
 }
 
 // ============================================================
@@ -828,11 +829,11 @@ async function buildStatuts(){
     u.jpar("Toutes les fonctions, y compris celles des membres du conseil d\u2019administration et du bureau, sont gratuites et b\u00e9n\u00e9voles. Seuls les frais occasionn\u00e9s par l\u2019accomplissement de leur mandat sont rembours\u00e9s sur justificatifs."),
     u.h1("TITRE IV \u2014 RESSOURCES ET COMPTABILIT\u00c9"),
     u.artT("15","RESSOURCES"), u.jpar("Les ressources de l\u2019association comprennent :"),
-    u.num("Le montant des droits d\u2019entr\u00e9e et des cotisations ;"),
-    u.num("Les subventions de l\u2019\u00c9tat, du d\u00e9partement et des communes, ;"),
-    u.num("Les dons manuels des fid\u00e8les et sympathisants ;"),
-    u.num("Les r\u00e9tributions pour services rendus lors des c\u00e9r\u00e9monies cultuelles ;"),
-    u.num("Toutes les ressources autoris\u00e9es par les lois et r\u00e8glements en vigueur."),
+    u.num2("Le montant des droits d\u2019entr\u00e9e et des cotisations ;"),
+    u.num2("Les subventions de l\u2019\u00c9tat, du d\u00e9partement et des communes, ;"),
+    u.num2("Les dons manuels des fid\u00e8les et sympathisants ;"),
+    u.num2("Les r\u00e9tributions pour services rendus lors des c\u00e9r\u00e9monies cultuelles ;"),
+    u.num2("Toutes les ressources autoris\u00e9es par les lois et r\u00e8glements en vigueur."),
     u.artT("16","COMPTABILIT\u00c9 ET TRANSPARENCE"),
     u.jpar("Le tr\u00e9sorier tient une comptabilit\u00e9 r\u00e9guli\u00e8re. Les comptes annuels comprennent obligatoirement un \u00e9tat s\u00e9par\u00e9 retra\u00e7ant les financements re\u00e7us de l\u2019\u00e9tranger, conform\u00e9ment \u00e0 la loi n\u00b02021-1109 du 24 ao\u00fbt 2021. Tout financement en provenance de l\u2019\u00e9tranger sup\u00e9rieur \u00e0 10 000 \u20ac doit \u00eatre d\u00e9clar\u00e9 au repr\u00e9sentant de l\u2019\u00c9tat dans le d\u00e9partement."),
     u.h1("TITRE V \u2014 LIEUX DE CULTE ET S\u00c9CURIT\u00c9"),
@@ -893,7 +894,7 @@ async function buildPV(){
   var s=state,a=s.assoc,b=s.bureau,f=s.fonct;
   var dateStr=longDate(f.date);
 
-  var fullBureau=[{fn:"Pr\u00e9sident(e)",civ:b.president.civ,nom:b.president.nom,prenom:b.president.prenom,prof:b.president.profession,nat:b.president.nationalite,adr:b.president.adresse||fullAdresse(a)}];
+  var fullBureau=[{fn:"Pr\u00e9sident(e)",civ:b.president.civ,nom:b.president.nom,prenom:b.president.prenom,prof:b.president.profession,nat:b.president.nationalite,adr:fullAdresse(b.president)||fullAdresse(a)}];
   b.vicePresidents.forEach(function(vp){fullBureau.push({fn:"Vice-Pr\u00e9sident(e)",civ:"M.",nom:vp.nom,prenom:vp.prenom,prof:"",nat:"Fran\u00e7aise",adr:fullAdresse(a)});});
   fullBureau.push({fn:"Secr\u00e9taire",civ:b.secretaire.civ,nom:b.secretaire.nom,prenom:b.secretaire.prenom,prof:b.secretaire.profession,nat:b.secretaire.nationalite,adr:fullAdresse(b.secretaire)||fullAdresse(a)});
   b.secretairesAdjoints.forEach(function(sa){fullBureau.push({fn:"Secr\u00e9taire Adjoint(e)",civ:"M.",nom:sa.nom,prenom:sa.prenom,prof:"",nat:"Fran\u00e7aise",adr:fullAdresse(a)});});
@@ -1305,8 +1306,7 @@ function renderStep2(){
       '<div class="f" style="margin-bottom:8px"><label>Nom'+(req?' <span class="req">*</span>':'')+' </label><input id="b'+key+'n" type="text" value="'+esc(d.nom)+'" placeholder="Nom"></div></div>'+
       (key!=="imam"?
         '<div class="fr"><div class="f" style="margin-bottom:6px"><label>Profession <span class="req">*</span></label><input id="b'+key+'pr" type="text" value="'+esc(d.profession||'')+'" placeholder="Ex\u00a0: Commer\u00e7ant"></div>'+
-        '<div class="f" style="margin-bottom:6px"><label>Nationalit\u00e9 <span class="req">*</span></label><input id="b'+key+'na" type="text" value="'+esc(d.nationalite||'Fran\u00e7aise')+'" placeholder="Fran\u00e7aise"></div></div>'+
-        mkAddrFields("b"+key,d)
+        '<div class="f" style="margin-bottom:6px"><label>Nationalit\u00e9 <span class="req">*</span></label><input id="b'+key+'na" type="text" value="'+esc(d.nationalite||'Fran\u00e7aise')+'" placeholder="Fran\u00e7aise"></div></div>'+mkAddrFields("b"+key,d)
       :'')+
       '</div>';
   }
