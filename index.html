@@ -698,7 +698,7 @@ async function buildCerfa13973PDF(){
     var of=form.getTextField("Objet");
     of.enableMultiline();
     of.setFontSize(9);
-    of.setText(objet.substring(0,500));
+    of.setText(objet.substring(0,700));
     if(_font) of.updateAppearances(_font);
   }catch(e){}
   st("Etage",a.etage||"");
