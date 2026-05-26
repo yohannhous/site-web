@@ -145,12 +145,20 @@ function syncDOM(){
     if(gid("ma"+i)) state.membres[i].adresse=v("ma"+i);
   }
   ["president","secretaire","tresorier"].forEach(function(k){
-    if(gid("b"+k+"p")) state.bureau[k].prenom=v("b"+k+"p");
-    if(gid("b"+k+"n")) state.bureau[k].nom=v("b"+k+"n");
-    if(gid("b"+k+"c")) state.bureau[k].civ=v("b"+k+"c");
-    if(gid("b"+k+"pr")) state.bureau[k].profession=v("b"+k+"pr");
-    if(gid("b"+k+"na")) state.bureau[k].nationalite=v("b"+k+"na");
-    if(gid("b"+k+"ad")) state.bureau[k].adresse=v("b"+k+"ad");
+    if(gid("b"+k+"p"))   state.bureau[k].prenom=v("b"+k+"p");
+    if(gid("b"+k+"n"))   state.bureau[k].nom=v("b"+k+"n");
+    if(gid("b"+k+"c"))   state.bureau[k].civ=v("b"+k+"c");
+    if(gid("b"+k+"pr"))  state.bureau[k].profession=v("b"+k+"pr");
+    if(gid("b"+k+"na"))  state.bureau[k].nationalite=v("b"+k+"na");
+    if(gid("b"+k+"et"))  state.bureau[k].etage=v("b"+k+"et");
+    if(gid("b"+k+"bt"))  state.bureau[k].batiment=v("b"+k+"bt");
+    if(gid("b"+k+"nv"))  state.bureau[k].numVoie=v("b"+k+"nv");
+    if(gid("b"+k+"ev"))  state.bureau[k].extVoie=v("b"+k+"ev");
+    if(gid("b"+k+"tv"))  state.bureau[k].typeVoie=v("b"+k+"tv");
+    if(gid("b"+k+"nnv")) state.bureau[k].nomVoie=v("b"+k+"nnv");
+    if(gid("b"+k+"ld"))  state.bureau[k].lieuDit=v("b"+k+"ld");
+    if(gid("b"+k+"cp"))  state.bureau[k].codePostal=v("b"+k+"cp");
+    if(gid("b"+k+"co"))  state.bureau[k].commune=v("b"+k+"co");
   });
   if(gid("bimp")) state.bureau.imam.prenom=v("bimp");
   if(gid("bimn")) state.bureau.imam.nom=v("bimn");
