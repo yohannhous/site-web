@@ -229,9 +229,11 @@ function buildObjetSocial(a){
   if(acts.jeunes) parts.push("les activit\u00e9s \u00e9ducatives et culturelles islamiques pour la jeunesse");
   if(acts.hajj) parts.push("l\u2019accompagnement des fid\u00e8les dans la pr\u00e9paration au p\u00e8lerinage (Hajj et Oumra)");
   if(acts.bibliotheque) parts.push("la gestion d\u2019une biblioth\u00e8que et la diffusion de la culture islamique");
-  if(!parts.length) return "L\u2019association a pour objet l\u2019exercice public du culte musulman et la gestion de la mosqu\u00e9e "+a.mosquee+" \u00e0 "+a.commune+", Mayotte.";
+  if(!parts.length) return "L\u2019association a pour objet l\u2019exercice public du culte musulman et la gestion de la mosqu\u00e9e "+a.mosquee+" \u00e0 "+a.commune+", Mayotte. L\u2019association s\u2019interdit toute activit\u00e9 \u00e0 caract\u00e8re politique.";
+  var last=parts.pop();
   var txt="L\u2019association a pour objet : ";
-  txt+=(parts.length===1?parts[0]:parts.slice(0,-1).join(", ")+" et "+parts[parts.length-1]);
+  if(parts.length) txt+=parts.join(", ")+", "+last;
+  else txt+=last;
   txt+=". L\u2019association s\u2019interdit toute activit\u00e9 \u00e0 caract\u00e8re politique.";
   return txt;
 }
@@ -677,6 +679,26 @@ async function buildCerfa13973PDF(){
   var form=pdfDoc.getForm();
   var _font=null;
   try{_font=await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);}catch(e){}
+  // Agrandir la zone Objet et réduire Titre pour plus d'espace
+  try{
+    var _p1=pdfDoc.getPage(0);
+    var _ar1=_p1.node.get(PDFLib.PDFName.of("Annots"));
+    if(_ar1){
+      var _a1=pdfDoc.context.lookup(_ar1);
+      for(var _ri=0;_ri<_a1.size();_ri++){
+        var _rann=pdfDoc.context.lookup(_a1.get(_ri));
+        var _rT=_rann.get(PDFLib.PDFName.of("T"));
+        if(!_rT) continue;
+        var _rn=_rT.decodeText?_rT.decodeText():_rT.toString().replace(/[()]/g,"");
+        var _nr=null;
+        if(_rn==="Titre"){
+          _nr=PDFLib.PDFArray.withContext(pdfDoc.context);
+          [79.3,407.06,538.51,469.43].forEach(function(v){_nr.push(PDFLib.PDFNumber.of(v));});
+        }
+        if(_nr) _rann.set(PDFLib.PDFName.of("Rect"),_nr);
+      }
+    }
+  }catch(e){}
   var s=state,a=s.assoc,b=s.bureau,f=s.fonct;
   var ds=fmtDate(f.date);
   var objet=buildObjetSocial(a);
@@ -703,14 +725,42 @@ async function buildCerfa13973PDF(){
     tf.setText(a.nom||"");
     if(_font) tf.updateAppearances(_font);
   }catch(e){}
-  // Objet multiligne
+  // Objet : masquer le champ AcroForm et dessiner directement sur la page
   try{
-    var of=form.getTextField("Objet");
-    of.enableMultiline();
-    of.setFontSize(9);
-    of.setText(objet.substring(0,700));
-    if(_font) of.updateAppearances(_font);
-  }catch(e){}
+    // Masquer le champ Objet
+    var p1o=pdfDoc.getPage(0);
+    var ar1o=p1o.node.get(PDFLib.PDFName.of("Annots"));
+    if(ar1o){var a1o=pdfDoc.context.lookup(ar1o);
+    for(var oi=0;oi<a1o.size();oi++){
+      var oann=pdfDoc.context.lookup(a1o.get(oi));
+      var oT=oann.get(PDFLib.PDFName.of("T"));
+      if(oT&&(oT.decodeText?oT.decodeText():oT.toString().replace(/[()]/g,""))==="Objet"){
+        oann.set(PDFLib.PDFName.of("F"),PDFLib.PDFNumber.of(2));
+        oann.delete(PDFLib.PDFName.of("AP"));
+    }}}
+    // Dessiner le texte avec word-wrap manuel et interligne contrôlé
+    var oFontSize=8.5, oLineH=15.5;
+    var oStartX=82, oStartY=841.89-465;
+    var oMaxW=538.51-82;
+    function wrapObjet(text,fnt,sz,mw){
+      var words=text.split(" "),lines=[],cur="";
+      words.forEach(function(w){
+        var test=cur?cur+" "+w:w;
+        if(fnt.widthOfTextAtSize(test,sz)>mw&&cur){lines.push(cur);cur=w;}
+        else cur=test;
+      });
+      if(cur) lines.push(cur);
+      return lines;
+    }
+    var objLines=wrapObjet(objet,_font,oFontSize,oMaxW);
+    objLines.forEach(function(line,i){
+      p1o.drawText(line,{
+        x:oStartX, y:oStartY-(i*oLineH),
+        size:oFontSize, font:_font,
+        color:PDFLib.rgb(0,0,0.45)
+      });
+    });
+  }catch(e){console.error("Objet draw:",e.message);}
   st("Etage",a.etage||"");
   st("Batiment",a.batiment||"");
   st("Numero_Voie",(a.numVoie||"").substring(0,10));
